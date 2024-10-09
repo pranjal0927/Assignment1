@@ -37,7 +37,7 @@ function Main() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await axios.get("https://dummyjson.com/products");
+        const response = await axios.get("https://localhost:8080/products");
         setProductData(response.data.products);
         setFilteredProducts(response.data.products);
       } catch (error) {
