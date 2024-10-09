@@ -1,25 +1,16 @@
 import axios from "axios";
 import React, { useEffect, useState } from "react";
 
-interface ProductType {
-  id: number;
-  title: string;
-  description: string;
-  category: string;
-  price: number;
-  rating: number;
-}
-
 function Main() {
-  const [productData, setProductData] = useState<ProductType[]>([]);
+  const [productData, setProductData] = useState([]);
   const [searchItem, setSearchItem] = useState("");
-  const [filteredProducts, setFilteredProducts] = useState<ProductType[]>([]);
-  const [selectedIds, setSelectedIds] = useState<number[]>([]);
-  const [page, setPage] = useState<number>(1);
-  const [itemPerPage, setItemPerPage] = useState<number>(10);
+  const [filteredProducts, setFilteredProducts] = useState([]);
+  const [selectedIds, setSelectedIds] = useState([]);
+  const [page, setPage] = useState(1);
+  const [itemPerPage] = useState(10);
 
   // Search Handler
-  const SearchHandler = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const SearchHandler = (event) => {
     setSearchItem(event.target.value);
   };
 
@@ -32,9 +23,9 @@ function Main() {
   };
 
   // Debounce function
-  const debounce = (func: Function, delay: number) => {
-    let timeOutId: NodeJS.Timeout;
-    return (...args: any[]) => {
+  const debounce = (func, delay) => {
+    let timeOutId;
+    return (...args) => {
       if (timeOutId) clearTimeout(timeOutId);
       timeOutId = setTimeout(() => {
         func(...args);
@@ -46,7 +37,7 @@ function Main() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await axios.get("https://127.0.0.1:8080/products");
+        const response = await axios.get("https://dummyjson.com/products");
         setProductData(response.data.products);
         setFilteredProducts(response.data.products);
       } catch (error) {
@@ -62,14 +53,14 @@ function Main() {
     debouncedFilter();
   }, [searchItem]);
 
-  // checkbox handler
-  const checkBoxSelect = (id: number) => {
+  // Checkbox handler
+  const checkBoxSelect = (id) => {
     setSelectedIds((prev) =>
       prev.includes(id) ? prev.filter((item) => item !== id) : [...prev, id]
     );
   };
 
-  // DeleteHandler
+  // Delete handler
   const deleteHandler = () => {
     setFilteredProducts((prev) =>
       prev.filter((item) => !selectedIds.includes(item.id))
@@ -90,7 +81,6 @@ function Main() {
     <div>
       <input
         type="text"
-        className="container my-5 p-3 d-flex justify-content-center align-items-center"
         placeholder="Search your Product name...."
         value={searchItem}
         onChange={SearchHandler}
@@ -102,7 +92,7 @@ function Main() {
           : "No rows selected"}
       </div>
 
-      <table className="table container">
+      <table>
         <thead>
           <tr>
             <th>
@@ -156,29 +146,27 @@ function Main() {
           ))}
         </tbody>
       </table>
-      <div className="container">
-        <div className="row align-item-center justify-content-center ">
-          <div className="col">
-            <button className="btn btn-danger " onClick={deleteHandler}>
-              Delete
-            </button>
+      <div>
+        <div>
+          <div>
+            <button onClick={deleteHandler}>Delete</button>
           </div>
-          <div className="col">
-            <div className="pagination ">
+          <div>
+            <div>
               <button
-                className="btn btn-secondary"
                 onClick={() => setPage((prev) => Math.max(prev - 1, 1))}
+                disabled={page === 1}
               >
                 Previous
               </button>
-              <span className="d-flex justify-content-center align-items-center">
+              <span>
                 Page {page} of {totalPages}
               </span>
               <button
-                className="btn btn-secondary "
                 onClick={() =>
                   setPage((prev) => Math.min(prev + 1, totalPages))
                 }
+                disabled={page === totalPages}
               >
                 Next
               </button>
